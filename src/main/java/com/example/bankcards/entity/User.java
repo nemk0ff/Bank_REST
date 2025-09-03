@@ -1,4 +1,4 @@
-package com.example.bankcards.entity.users;
+package com.example.bankcards.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;
@@ -27,7 +27,7 @@ import lombok.Setter;
 @Builder
 @NamedQuery(name = "User.findByEmail",
     query = "FROM User WHERE email = :email")
-public final class User {
+public class User {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
