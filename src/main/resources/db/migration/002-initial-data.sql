@@ -1,0 +1,25 @@
+INSERT INTO users (email, role, password, name, surname, birthdate, registered_at)
+VALUES ('ivanov_arkadiy@senla.ru', 'USER', '$2a$10$Smy9JptsypUyVBHOTMidTeh3pEZ9UA1uoGv6H5yLhqXXdLMkQsTKK', 'Arkadiy',
+        'Ivanov', '1995-05-15', '2025-04-09 10:15:00+03'),
+       ('petrova_anna@senla.ru', 'USER', '$2a$10$Smy9JptsypUyVBHOTMidTeh3pEZ9UA1uoGv6H5yLhqXXdLMkQsTKK', 'Anna',
+        'Petrova', '1998-08-22', '2025-04-09 11:30:00+03'),
+       ('sidorov_dmitry@senla.ru', 'USER', '$2a$10$Smy9JptsypUyVBHOTMidTeh3pEZ9UA1uoGv6H5yLhqXXdLMkQsTKK', 'Dmitry',
+        'Sidorov', '1992-11-30', '2025-04-09 12:45:00+03'),
+       ('smirnova_elena@senla.ru', 'USER', '$2a$10$Smy9JptsypUyVBHOTMidTeh3pEZ9UA1uoGv6H5yLhqXXdLMkQsTKK', 'Elena',
+        'Smirnova', '1990-03-10', '2025-04-09 14:00:00+03'),
+       ('kozlov_alexey@senla.ru', 'USER', '$2a$10$Smy9JptsypUyVBHOTMidTeh3pEZ9UA1uoGv6H5yLhqXXdLMkQsTKK', 'Alexey',
+        'Kozlov', '2000-01-01', '2025-04-09 15:15:00+03'),
+       ('nikolaeva_olga@senla.ru', 'USER', '$2a$10$Smy9JptsypUyVBHOTMidTeh3pEZ9UA1uoGv6H5yLhqXXdLMkQsTKK', 'Olga',
+        'Nikolaeva', '1997-07-18', '2025-04-09 16:30:00+03'),
+       ('fedorov_maxim@senla.ru', 'USER', '$2a$10$Smy9JptsypUyVBHOTMidTeh3pEZ9UA1uoGv6H5yLhqXXdLMkQsTKK', 'Maxim',
+        'Fedorov', '2002-09-25', '2025-04-09 17:45:00+03'),
+       ('morozova_ekaterina@senla.ru', 'USER', '$2a$10$Smy9JptsypUyVBHOTMidTeh3pEZ9UA1uoGv6H5yLhqXXdLMkQsTKK',
+        'Ekaterina', 'Morozova', '1993-04-05', '2025-04-09 19:00:00+03'),
+       ('volkov_andrey@senla.ru', 'USER', '$2a$10$Smy9JptsypUyVBHOTMidTeh3pEZ9UA1uoGv6H5yLhqXXdLMkQsTKK', 'Andrey',
+        'Volkov', '2005-12-12', '2025-04-09 20:15:00+03'),
+       ('orlova_maria@senla.ru', 'USER', '$2a$10$Smy9JptsypUyVBHOTMidTeh3pEZ9UA1uoGv6H5yLhqXXdLMkQsTKK', 'Maria',
+        'Orlova', '2007-06-20', '2025-04-09 21:30:00+03'),
+       ('admin@senla.ru', 'ADMIN', '$2a$10$zp4b4MEUJJPBESQka4E7tuHFYnGMAwYa2OqZxLo5LeNX66fLeKa4m', 'Admin', 'Senla',
+        '1995-04-20', '2025-04-09 09:00:00+03');
+
+SELECT setval('users_id_seq', (SELECT MAX(id) FROM users));
