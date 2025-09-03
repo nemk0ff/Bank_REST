@@ -1,20 +1,7 @@
 package com.example.bankcards.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -38,7 +25,7 @@ public class BankCard {
     @Column(name = "card_number", nullable = false, unique = true)
     private String cardNumber;
 
-    @Column(name = "masked_number", nullable = false)
+    @Column(name = "masked_number", nullable = false, length = 19)
     private String maskedNumber;
 
     @Column(name = "card_holder", nullable = false)
@@ -48,14 +35,14 @@ public class BankCard {
     private LocalDate expiryDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, length = 10)
     private CardStatus status;
 
     @Column(nullable = false, precision = 19, scale = 4)
     private BigDecimal balance;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "fk_bank_cards_user"))
     private User user;
 
     @CreationTimestamp
@@ -65,4 +52,16 @@ public class BankCard {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    public boolean isActive() {
+        return CardStatus.ACTIVE.equals(this.status);
+    }
+
+    public boolean isBlocked() {
+        return CardStatus.BLOCKED.equals(this.status);
+    }
+
+    public boolean isExpired() {
+        return CardStatus.EXPIRED.equals(this.status);
+    }
 }
