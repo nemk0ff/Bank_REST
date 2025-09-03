@@ -24,5 +24,4 @@ public record BankCardDTO(
     BigDecimal balance,
 
     @NotNull(message = "ID владельца обязателен")
-    Long userId
-) {}
+    Long userId, java.time.LocalDateTime createdAt) {}

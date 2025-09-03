@@ -12,4 +12,7 @@ public record CreateCardRequestDTO(
     String cardHolder,
 
     @NotNull(message = "Срок действия обязателен")
-    LocalDate expiryDate) {}
+    LocalDate expiryDate,
+
+    @NotNull(message = "ID владельца обязателен")
+    Long userId) {}
