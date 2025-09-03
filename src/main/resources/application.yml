@@ -18,6 +18,9 @@ spring:
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
+  liquibase:
+    change-log: classpath:db/migration/master.yaml
+    enabled: true
 
 springdoc:
   api-docs:
@@ -32,3 +35,10 @@ logging:
     org.springframework.security: DEBUG
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+encryption:
+  secret-key: mySuperSecretKey
+
+jwt:
+  secret: my-very-secure-key-256-bits-long-1234567890
+  expiration: 86400000 # 24 hours in milliseconds
