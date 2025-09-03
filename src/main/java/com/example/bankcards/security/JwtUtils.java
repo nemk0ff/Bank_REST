@@ -6,6 +6,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -16,18 +17,21 @@ import java.util.function.Function;
 @Component
 public class JwtUtils {
 
+  @Value("${jwt.secret}")
+  private String secret;
+  @Value("${jwt.expiration}")
+  private long expiration;
+
   private SecretKey secretKey;
 
   @PostConstruct
   public void init() {
-    String secret = "my-very-secure-key-256-bits-long-1234567890";
     this.secretKey = Keys.hmacShaKeyFor(secret.getBytes());
     log.info("JwtUtils initialized with secret key");
   }
 
   public String generateToken(String username, String role) {
     log.info("Generating token for username: {}, role: {}", username, role);
-    long expiration = 1000 * 60 * 60 * 24 * 7;
     return Jwts.builder()
         .subject(username)
         .claim("role", role)

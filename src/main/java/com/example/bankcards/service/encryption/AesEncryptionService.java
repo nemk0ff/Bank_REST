@@ -1,6 +1,6 @@
 package com.example.bankcards.service.encryption;
 
-import com.example.bankcards.exception.EncryptionException;
+import com.example.bankcards.exception.card.EncryptionException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
