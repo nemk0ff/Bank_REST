@@ -1,5 +1,0 @@
-databaseChangeLog:
-  - include:
-      file: db/migration/001-initial-schema.sql
-  - include:
-      file: db/migration/002-initial-data.sql

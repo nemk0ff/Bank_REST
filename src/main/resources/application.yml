@@ -19,7 +19,7 @@ spring:
     password: ${SPRING_DATASOURCE_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
   liquibase:
-    change-log: classpath:db/migration/master.yaml
+    change-log: classpath:db/master.yaml
     enabled: ${LIQUIBASE_ENABLED:true}
 
 springdoc:
