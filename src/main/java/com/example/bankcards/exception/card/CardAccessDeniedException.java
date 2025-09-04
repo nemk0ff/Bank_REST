@@ -1,7 +1,9 @@
 package com.example.bankcards.exception.card;
 
-public class CardAccessDeniedException extends RuntimeException {
+import com.example.bankcards.exception.BankSystemException;
+
+public class CardAccessDeniedException extends BankSystemException {
   public CardAccessDeniedException(Long cardId) {
-    super("Доступ к карте " + cardId + " запрещен");
+    super("Доступ к карте " + cardId + " запрещен", "Ошибка доступа к карте");
   }
 }

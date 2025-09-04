@@ -1,4 +1,4 @@
-package com.example.bankcards.exception.card;
+package com.example.bankcards.exception.transfer;
 
 public class EncryptionException extends RuntimeException {
   public EncryptionException(String message) {

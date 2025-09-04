@@ -1,7 +1,9 @@
 package com.example.bankcards.exception.card;
 
-public class CardNotFoundException extends RuntimeException {
+import com.example.bankcards.exception.BankSystemException;
+
+public class CardNotFoundException extends BankSystemException {
   public CardNotFoundException(Long cardId) {
-    super("Карта с ID " + cardId + " не найдена");
+    super("Карта с ID " + cardId + " не найдена", "Ошибка при поиске карты");
   }
 }
