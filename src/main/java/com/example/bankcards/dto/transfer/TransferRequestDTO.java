@@ -14,4 +14,5 @@ public record TransferRequestDTO(
     @NotNull(message = "Сумма перевода обязательна")
     @DecimalMin(value = "0.01", message = "Сумма перевода должна быть больше 0")
     BigDecimal amount
-) {}
+) {
+}

@@ -5,7 +5,11 @@ import com.example.bankcards.dto.transfer.TransferRequestDTO;
 import com.example.bankcards.dto.transfer.TransferResponseDTO;
 import com.example.bankcards.entity.BankCard;
 import com.example.bankcards.entity.CardStatus;
-import com.example.bankcards.exception.card.*;
+import com.example.bankcards.exception.card.CardAccessDeniedException;
+import com.example.bankcards.exception.card.CardAlreadyBlockedException;
+import com.example.bankcards.exception.card.CardExpiredException;
+import com.example.bankcards.exception.card.CardNotActiveException;
+import com.example.bankcards.exception.card.CardNotFoundException;
 import com.example.bankcards.exception.transfer.InsufficientFundsException;
 import com.example.bankcards.exception.transfer.InvalidAmountException;
 import com.example.bankcards.exception.transfer.SameCardTransferException;
@@ -118,7 +122,6 @@ public class UserCardService {
         .map(this::convertToDTO);
   }
 
-  // Приватные вспомогательные методы
   private BankCard getCardWithAccessCheck(Long cardId, Long userId) {
     BankCard card = cardRepository.findById(cardId)
         .orElseThrow(() -> new CardNotFoundException(cardId));

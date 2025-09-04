@@ -1,7 +1,9 @@
 package com.example.bankcards.dto.card;
 
 import com.example.bankcards.entity.CardStatus;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -24,4 +26,5 @@ public record BankCardDTO(
     BigDecimal balance,
 
     @NotNull(message = "ID владельца обязателен")
-    Long userId, java.time.LocalDateTime createdAt) {}
+    Long userId, java.time.LocalDateTime createdAt) {
+}

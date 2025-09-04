@@ -1,6 +1,8 @@
 package com.example.bankcards.dto.card;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import java.time.LocalDate;
 
 public record CreateCardRequestDTO(
@@ -15,4 +17,5 @@ public record CreateCardRequestDTO(
     LocalDate expiryDate,
 
     @NotNull(message = "ID владельца обязателен")
-    Long userId) {}
+    Long userId) {
+}

@@ -7,4 +7,5 @@ public record TransferResponseDTO(
     String message,
     BigDecimal fromCardBalance,
     BigDecimal toCardBalance
-) {}
+) {
+}
