@@ -5,22 +5,22 @@ server:
 
 spring:
   jpa:
-    show-sql: true
+    show-sql: ${JPA_SHOW_SQL:true}
     properties:
       hibernate:
-        format_sql: true
+        format_sql: ${HIBERNATE_FORMAT_SQL:true}
         dialect: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: validate
     database: postgresql
   datasource:
-    url: jdbc:postgresql://localhost:5432/banking_system
-    username: postgres
-    password: postgres
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/banking_system}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
   liquibase:
     change-log: classpath:db/migration/master.yaml
-    enabled: true
+    enabled: ${LIQUIBASE_ENABLED:true}
 
 springdoc:
   api-docs:
@@ -31,14 +31,14 @@ springdoc:
 
 logging:
   level:
-    com.example.bankcards: DEBUG
-    org.springframework.security: DEBUG
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    com.example.bankcards: ${LOG_LEVEL_COM_EXAMPLE:DEBUG}
+    org.springframework.security: ${LOG_LEVEL_SPRING_SECURITY:DEBUG}
+    org.hibernate.SQL: ${LOG_LEVEL_HIBERNATE_SQL:DEBUG}
+    org.hibernate.type.descriptor.sql.BasicBinder: ${LOG_LEVEL_HIBERNATE_BINDER:TRACE}
 
 encryption:
-  secret-key: mySuperSecretKey
+  secret-key: ${ENCRYPTION_SECRET_KEY:mySuperSecretKey}
 
 jwt:
-  secret: my-very-secure-key-256-bits-long-1234567890
-  expiration: 86400000 # 24 hours in milliseconds
+  secret: ${JWT_SECRET:my-very-secure-key-256-bits-long-1234567890}
+  expiration: ${JWT_EXPIRATION:86400000} # 24 hours in milliseconds

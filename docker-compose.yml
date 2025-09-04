@@ -1,9 +1,72 @@
-# 
-# docker-compose.yml — определяет сервисы для разработки и тестирования.
+version: '3.8'
 
-Что нужно сделать:
-  - Настроить сервисы для:
-      - PostgreSQL (или MySQL) с начальной базой.
-      - Приложения Spring Boot (если нужно).
-  - Открыть нужные порты (например, 5432, 8080).
-  - Настроить volume для хранения данных БД.
+services:
+  app:
+    build: .
+    ports:
+      - "${APP_PORT:-8080}:8080"
+    environment:
+      # Database
+      SPRING_DATASOURCE_URL: jdbc:postgresql://${DB_HOST:-postgresql}:${DB_PORT:-5432}/${DB_NAME:-banking_system}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-postgres}
+
+      # Liquibase
+      LIQUIBASE_ENABLED: ${LIQUIBASE_ENABLED:-true}
+
+      # Logging
+      LOG_LEVEL_COM_EXAMPLE: ${LOG_LEVEL_COM_EXAMPLE:-DEBUG}
+      LOG_LEVEL_SPRING_SECURITY: ${LOG_LEVEL_SPRING_SECURITY:-DEBUG}
+      LOG_LEVEL_HIBERNATE_SQL: ${LOG_LEVEL_HIBERNATE_SQL:-DEBUG}
+      LOG_LEVEL_HIBERNATE_BINDER: ${LOG_LEVEL_HIBERNATE_BINDER:-TRACE}
+
+      # Security
+      ENCRYPTION_SECRET_KEY: ${ENCRYPTION_SECRET_KEY:-mySuperSecretKey}
+      JWT_SECRET: ${JWT_SECRET:-my-very-secure-key-256-bits-long-1234567890}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-86400000}
+
+      # JPA
+      JPA_SHOW_SQL: ${JPA_SHOW_SQL:-true}
+      HIBERNATE_FORMAT_SQL: ${HIBERNATE_FORMAT_SQL:-true}
+    depends_on:
+      liquibase:
+        condition: service_completed_successfully
+      postgresql:
+        condition: service_healthy
+    restart: unless-stopped
+
+  liquibase:
+    image: liquibase/liquibase
+    depends_on:
+      postgresql:
+        condition: service_healthy
+    command:
+      - --searchPath=/liquibase/changelog
+      - --changelog-file=master.xml
+      - --driver=org.postgresql.Driver
+      - --url=jdbc:postgresql://${DB_HOST:-postgresql}:${DB_PORT:-5432}/${DB_NAME:-banking_system}
+      - --username=${DB_USER:-postgres}
+      - --password=${DB_PASSWORD:-postgres}
+      - update
+    volumes:
+      - ./src/main/resources/migrations:/liquibase/changelog
+
+  postgresql:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: ${DB_NAME:-banking_system}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-banking_system}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
