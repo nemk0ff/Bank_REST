@@ -18,8 +18,8 @@ import org.springframework.http.ProblemDetail;
 @Configuration
 @OpenAPIDefinition(
     info = @Info(
-        title = "Social Network Api",
-        description = "API социальной сети",
+        title = "Banking System Api",
+        description = "API банковской системы",
         version = "1.0.0",
         contact = @Contact(name = "Nemkov Daniil", url = "https://github.com/nemk0ff")
     )
