@@ -37,4 +37,8 @@ public interface BankCardRepository extends JpaRepository<BankCard, Long> {
   Page<BankCard> findByBalanceGreaterThan(BigDecimal minBalance, Pageable pageable);
 
   Page<BankCard> findByExpiryDateBetween(LocalDate startDate, LocalDate endDate, Pageable pageable);
+
+  Page<BankCard> findByUserIdAndStatus(Long userId, CardStatus status, Pageable pageable);
+
+  Page<BankCard> findByUserIdAndCardHolderContainingIgnoreCase(Long userId, String cardHolder, Pageable pageable);
 }
