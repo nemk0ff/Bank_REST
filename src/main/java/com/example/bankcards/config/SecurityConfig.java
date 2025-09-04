@@ -11,7 +11,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -20,9 +19,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity(proxyTargetClass = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
-  private final AuthenticationEntryPoint authEntryPoint;
   private final UserDetailsService userDetailsService;
-  private final JwtUtils jwtUtils; // Добавляем JwtUtils
+  private final JwtUtils jwtUtils;
 
   private static final String[] SWAGGER_WHITELIST = {
       "/swagger-ui.html",
@@ -44,9 +42,7 @@ public class SecurityConfig {
             .anyRequest().authenticated())
         .sessionManagement(session -> session
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .addFilterBefore(jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class)
-        .exceptionHandling(exceptionHandling -> exceptionHandling
-            .authenticationEntryPoint(authEntryPoint));
+        .addFilterBefore(jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class);
     return http.build();
   }
 

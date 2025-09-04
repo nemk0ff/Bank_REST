@@ -4,7 +4,7 @@ import com.example.bankcards.dto.auth.AuthRequestDTO;
 import com.example.bankcards.dto.auth.AuthResponseDTO;
 import com.example.bankcards.dto.auth.RegisterDTO;
 import com.example.bankcards.dto.auth.UserResponseDTO;
-import com.example.bankcards.service.auth.AuthService;
+import com.example.bankcards.security.AuthService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

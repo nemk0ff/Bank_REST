@@ -1,5 +1,6 @@
 package com.example.bankcards.exception;
 
+import com.example.bankcards.exception.auth.EmailAlreadyExistsException;
 import com.example.bankcards.exception.auth.UserNotRegisteredException;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.EntityNotFoundException;
@@ -51,6 +52,22 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         "Неверный тип параметра", request, HttpStatus.BAD_REQUEST, ex);
 
     return new ResponseEntity<>(problemDetail, HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(EmailAlreadyExistsException.class)
+  protected ResponseEntity<ProblemDetail> handleEmailAlreadyExistsException(
+      EmailAlreadyExistsException ex, WebRequest request) {
+    log.warn("Email уже существует: {}", ex.getMessage());
+
+    ProblemDetail problemDetail = problemDetailBuilder(
+        "Email уже существует",
+        request,
+        HttpStatus.CONFLICT,
+        ex
+    );
+    problemDetail.setDetail(ex.getMessage());
+
+    return new ResponseEntity<>(problemDetail, HttpStatus.CONFLICT);
   }
 
   @ExceptionHandler(ConstraintViolationException.class)

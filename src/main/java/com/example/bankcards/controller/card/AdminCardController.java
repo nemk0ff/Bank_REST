@@ -2,7 +2,7 @@ package com.example.bankcards.controller.card;
 
 import com.example.bankcards.dto.card.BankCardDTO;
 import com.example.bankcards.dto.card.CreateCardRequestDTO;
-import com.example.bankcards.service.card.AdminCardService;
+import com.example.bankcards.service.impl.AdminCardServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,40 +33,40 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Admin Card Management", description = "Управление картами для администраторов")
 public class AdminCardController {
 
-  private final AdminCardService adminCardService;
+  private final AdminCardServiceImpl adminCardServiceImpl;
 
   @GetMapping("/user/{userId}/all")
   @Operation(summary = "Получить все карты пользователя (без пагинации)")
   public ResponseEntity<List<BankCardDTO>> getAllCardsByUser(@PathVariable Long userId) {
-    List<BankCardDTO> cards = adminCardService.getCardsByUser(userId);
+    List<BankCardDTO> cards = adminCardServiceImpl.getCardsByUser(userId);
     return ResponseEntity.ok(cards);
   }
 
   @PostMapping
   @Operation(summary = "Создать новую карту")
   public ResponseEntity<BankCardDTO> createCard(@Valid @RequestBody CreateCardRequestDTO requestDTO) {
-    BankCardDTO createdCard = adminCardService.createCard(requestDTO);
+    BankCardDTO createdCard = adminCardServiceImpl.createCard(requestDTO);
     return ResponseEntity.ok(createdCard);
   }
 
   @PostMapping("/{cardId}/block")
   @Operation(summary = "Заблокировать карту")
   public ResponseEntity<BankCardDTO> blockCard(@PathVariable Long cardId) {
-    BankCardDTO blockedCard = adminCardService.blockCard(cardId);
+    BankCardDTO blockedCard = adminCardServiceImpl.blockCard(cardId);
     return ResponseEntity.ok(blockedCard);
   }
 
   @PostMapping("/{cardId}/activate")
   @Operation(summary = "Активировать карту")
   public ResponseEntity<BankCardDTO> activateCard(@PathVariable Long cardId) {
-    BankCardDTO activatedCard = adminCardService.activateCard(cardId);
+    BankCardDTO activatedCard = adminCardServiceImpl.activateCard(cardId);
     return ResponseEntity.ok(activatedCard);
   }
 
   @DeleteMapping("/{cardId}")
   @Operation(summary = "Удалить карту")
   public ResponseEntity<Void> deleteCard(@PathVariable Long cardId) {
-    adminCardService.deleteCard(cardId);
+    adminCardServiceImpl.deleteCard(cardId);
     return ResponseEntity.noContent().build();
   }
 
@@ -81,14 +81,14 @@ public class AdminCardController {
     Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
     Pageable pageable = PageRequest.of(page, size, sort);
 
-    Page<BankCardDTO> cards = adminCardService.getAllCards(pageable);
+    Page<BankCardDTO> cards = adminCardServiceImpl.getAllCards(pageable);
     return ResponseEntity.ok(cards);
   }
 
   @GetMapping("/{cardId}")
   @Operation(summary = "Получить карту по ID")
   public ResponseEntity<BankCardDTO> getCardById(@PathVariable Long cardId) {
-    BankCardDTO card = adminCardService.getCardById(cardId);
+    BankCardDTO card = adminCardServiceImpl.getCardById(cardId);
     return ResponseEntity.ok(card);
   }
 
@@ -100,7 +100,7 @@ public class AdminCardController {
       @RequestParam(defaultValue = "10") int size) {
 
     Pageable pageable = PageRequest.of(page, size);
-    Page<BankCardDTO> cards = adminCardService.getCardsByUser(userId, pageable);
+    Page<BankCardDTO> cards = adminCardServiceImpl.getCardsByUser(userId, pageable);
     return ResponseEntity.ok(cards);
   }
 }

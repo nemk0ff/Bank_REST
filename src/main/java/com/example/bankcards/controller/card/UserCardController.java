@@ -3,7 +3,7 @@ package com.example.bankcards.controller.card;
 import com.example.bankcards.dto.card.BankCardDTO;
 import com.example.bankcards.dto.transfer.TransferRequestDTO;
 import com.example.bankcards.dto.transfer.TransferResponseDTO;
-import com.example.bankcards.service.card.UserCardService;
+import com.example.bankcards.service.impl.UserCardServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,7 +32,7 @@ import java.math.BigDecimal;
 @Tag(name = "User Card Operations", description = "Операции с картами для пользователей")
 public class UserCardController {
 
-  private final UserCardService userCardService;
+  private final UserCardServiceImpl userCardServiceImpl;
 
   @GetMapping
   @Operation(summary = "Получить карты пользователя с пагинацией")
@@ -46,7 +46,7 @@ public class UserCardController {
     Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
     Pageable pageable = PageRequest.of(page, size, sort);
 
-    Page<BankCardDTO> cards = userCardService.getUserCards(userId, pageable);
+    Page<BankCardDTO> cards = userCardServiceImpl.getUserCards(userId, pageable);
     return ResponseEntity.ok(cards);
   }
 
@@ -58,7 +58,7 @@ public class UserCardController {
       @RequestParam(defaultValue = "10") int size) {
 
     Pageable pageable = PageRequest.of(page, size);
-    Page<BankCardDTO> cards = userCardService.getUserActiveCards(userId, pageable);
+    Page<BankCardDTO> cards = userCardServiceImpl.getUserActiveCards(userId, pageable);
     return ResponseEntity.ok(cards);
   }
 
@@ -68,7 +68,7 @@ public class UserCardController {
       @AuthenticationPrincipal Long userId,
       @PathVariable Long cardId) {
 
-    BankCardDTO card = userCardService.getCardDetails(cardId, userId);
+    BankCardDTO card = userCardServiceImpl.getCardDetails(cardId, userId);
     return ResponseEntity.ok(card);
   }
 
@@ -78,7 +78,7 @@ public class UserCardController {
       @AuthenticationPrincipal Long userId,
       @PathVariable Long cardId) {
 
-    BankCardDTO blockedCard = userCardService.requestCardBlock(cardId, userId);
+    BankCardDTO blockedCard = userCardServiceImpl.requestCardBlock(cardId, userId);
     return ResponseEntity.ok(blockedCard);
   }
 
@@ -88,14 +88,14 @@ public class UserCardController {
       @AuthenticationPrincipal Long userId,
       @Valid @RequestBody TransferRequestDTO requestDTO) {
 
-    TransferResponseDTO response = userCardService.transferBetweenCards(userId, requestDTO);
+    TransferResponseDTO response = userCardServiceImpl.transferBetweenCards(userId, requestDTO);
     return ResponseEntity.ok(response);
   }
 
   @GetMapping("/balance/total")
   @Operation(summary = "Получить общий баланс")
   public ResponseEntity<BigDecimal> getTotalBalance(@AuthenticationPrincipal Long userId) {
-    BigDecimal balance = userCardService.getTotalBalance(userId);
+    BigDecimal balance = userCardServiceImpl.getTotalBalance(userId);
     return ResponseEntity.ok(balance);
   }
 
@@ -108,7 +108,7 @@ public class UserCardController {
       @RequestParam(defaultValue = "10") int size) {
 
     Pageable pageable = PageRequest.of(page, size);
-    Page<BankCardDTO> cards = userCardService.searchUserCards(userId, query, pageable);
+    Page<BankCardDTO> cards = userCardServiceImpl.searchUserCards(userId, query, pageable);
     return ResponseEntity.ok(cards);
   }
 }
