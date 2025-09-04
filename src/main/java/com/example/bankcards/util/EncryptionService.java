@@ -1,4 +1,4 @@
-package com.example.bankcards.service.encryption;
+package com.example.bankcards.util;
 
 public interface EncryptionService {
   String encrypt(String data);

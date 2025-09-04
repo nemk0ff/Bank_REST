@@ -1,4 +1,4 @@
-package com.example.bankcards.service.card;
+package com.example.bankcards.service.impl;
 
 import com.example.bankcards.dto.card.BankCardDTO;
 import com.example.bankcards.dto.card.CreateCardRequestDTO;
@@ -10,7 +10,8 @@ import com.example.bankcards.exception.card.CardAlreadyExistsException;
 import com.example.bankcards.exception.card.CardNotFoundException;
 import com.example.bankcards.repository.BankCardRepository;
 import com.example.bankcards.repository.UserRepository;
-import com.example.bankcards.service.encryption.EncryptionService;
+import com.example.bankcards.service.AdminCardService;
+import com.example.bankcards.util.EncryptionService;
 import java.math.BigDecimal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class AdminCardService {
+public class AdminCardServiceImpl implements AdminCardService {
 
   private final BankCardRepository cardRepository;
   private final UserRepository userRepository;

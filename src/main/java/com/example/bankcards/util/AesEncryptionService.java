@@ -1,4 +1,4 @@
-package com.example.bankcards.service.encryption;
+package com.example.bankcards.util;
 
 import com.example.bankcards.exception.transfer.EncryptionException;
 import lombok.extern.slf4j.Slf4j;

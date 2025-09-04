@@ -1,4 +1,4 @@
-package com.example.bankcards.service.auth;
+package com.example.bankcards.security;
 
 import com.example.bankcards.dto.auth.AuthRequestDTO;
 import com.example.bankcards.dto.auth.AuthResponseDTO;

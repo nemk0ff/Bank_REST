@@ -1,4 +1,4 @@
-package com.example.bankcards.service.auth;
+package com.example.bankcards.security;
 
 import com.example.bankcards.dto.auth.AuthRequestDTO;
 import com.example.bankcards.dto.auth.AuthResponseDTO;
@@ -10,7 +10,6 @@ import com.example.bankcards.exception.auth.EmailAlreadyExistsException;
 import com.example.bankcards.exception.auth.IllegalPasswordException;
 import com.example.bankcards.exception.auth.UserNotRegisteredException;
 import com.example.bankcards.repository.UserRepository;
-import com.example.bankcards.security.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;

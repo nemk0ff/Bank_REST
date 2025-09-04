@@ -1,4 +1,4 @@
-package com.example.bankcards.service.card;
+package com.example.bankcards.service.impl;
 
 import com.example.bankcards.dto.card.BankCardDTO;
 import com.example.bankcards.dto.transfer.TransferRequestDTO;
@@ -14,6 +14,7 @@ import com.example.bankcards.exception.transfer.InsufficientFundsException;
 import com.example.bankcards.exception.transfer.InvalidAmountException;
 import com.example.bankcards.exception.transfer.SameCardTransferException;
 import com.example.bankcards.repository.BankCardRepository;
+import com.example.bankcards.service.UserCardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -28,7 +29,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserCardService {
+public class UserCardServiceImpl implements UserCardService {
 
   private final BankCardRepository cardRepository;
 
