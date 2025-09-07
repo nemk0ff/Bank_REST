@@ -1,105 +1,166 @@
-<h1>🚀 Разработка Системы Управления Банковскими Картами</h1>
+# 🏦 Bank Cards Management System
 
-<h2>📁 Стартовая структура</h2>
-  <p>
-    Проектная структура с директориями и описательными файлами (<code>README Controller.md</code>, <code>README Service.md</code> и т.д.) уже подготовлена.<br />
-    Все реализации нужно добавлять <strong>в соответствующие директории</strong>.
-  </p>
-  <p>
-    После завершения разработки <strong>временные README-файлы нужно удалить</strong>, чтобы они не попадали в итоговую сборку.
-  </p>
-  
-<h2>📝 Описание задачи</h2>
-  <p>Разработать backend-приложение на Java (Spring Boot) для управления банковскими картами:</p>
-  <ul>
-    <li>Создание и управление картами</li>
-    <li>Просмотр карт</li>
-    <li>Переводы между своими картами</li>
-  </ul>
+Система управления банковскими картами с REST API, аутентификацией JWT и ролевым доступом.
 
-<h2>💳 Атрибуты карты</h2>
-  <ul>
-    <li>Номер карты (зашифрован, отображается маской: <code>**** **** **** 1234</code>)</li>
-    <li>Владелец</li>
-    <li>Срок действия</li>
-    <li>Статус: Активна, Заблокирована, Истек срок</li>
-    <li>Баланс</li>
-  </ul>
+## 🚀 Быстрый старт
 
-<h2>🧾 Требования</h2>
+### Требования
+- Java 17+
+- Docker и Docker Compose
+- Maven 3.8+
 
-<h3>✅ Аутентификация и авторизация</h3>
-  <ul>
-    <li>Spring Security + JWT</li>
-    <li>Роли: <code>ADMIN</code> и <code>USER</code></li>
-  </ul>
+### Запуск через Docker Compose
 
-<h3>✅ Возможности</h3>
-<strong>Администратор:</strong>
-  <ul>
-    <li>Создаёт, блокирует, активирует, удаляет карты</li>
-    <li>Управляет пользователями</li>
-    <li>Видит все карты</li>
-  </ul>
+```bash
+# Клонируйте репозиторий
+git clone <your-repo-url>
+cd bankcards
 
-<strong>Пользователь:</strong>
-  <ul>
-    <li>Просматривает свои карты (поиск + пагинация)</li>
-    <li>Запрашивает блокировку карты</li>
-    <li>Делает переводы между своими картами</li>
-    <li>Смотрит баланс</li>
-  </ul>
+# Запустите приложение с БД
+docker-compose up -d
 
-<h3>✅ API</h3>
-  <ul>
-    <li>CRUD для карт</li>
-    <li>Переводы между своими картами</li>
-    <li>Фильтрация и постраничная выдача</li>
-    <li>Валидация и сообщения об ошибках</li>
-  </ul>
+# Приложение будет доступно по http://localhost:8080
+```
 
-<h3>✅ Безопасность</h3>
-  <ul>
-    <li>Шифрование данных</li>
-    <li>Ролевой доступ</li>
-    <li>Маскирование номеров карт</li>
-  </ul>
+### Локальная разработка
 
-<h3>✅ Работа с БД</h3>
-  <ul>
-    <li>PostgreSQL или MySQL</li>
-    <li>Миграции через Liquibase (<code>src/main/resources/db/migration</code>)</li>
-  </ul>
+```bash
+# Сборка и запуск
+mvn clean package
+java -jar target/bankcards-*.jar
 
-<h3>✅ Документация</h3>
-  <ul>
-    <li>Swagger UI / OpenAPI — <code>docs/openapi.yaml</code></li>
-    <li><code>README.md</code> с инструкцией запуска</li>
-  </ul>
+# Или с Maven
+mvn spring-boot:run
+```
 
-<h3>✅ Развёртывание и тестирование</h3>
-  <ul>
-    <li>Docker Compose для dev-среды</li>
-    <li>Liquibase миграции</li>
-    <li>Юнит-тесты ключевой бизнес-логики</li>
-  </ul>
+## 📋 Функциональность
 
-<h2>📊 Оценка</h2>
-  <ul>
-    <li>Соответствие требованиям</li>
-    <li>Чистота архитектуры и кода</li>
-    <li>Безопасность</li>
-    <li>Обработка ошибок</li>
-    <li>Покрытие тестами</li>
-    <li>ООП и уровни абстракции</li>
-  </ul>
+### 👥 Роли пользователей
 
-<h2>💡 Технологии</h2>
-  <p>
-    Java 17+, Spring Boot, Spring Security, Spring Data JPA, PostgreSQL/MySQL, Liquibase, Docker, JWT, Swagger (OpenAPI)
-  </p>
+**Администратор (ADMIN):**
+- Полный CRUD для карт
+- Управление пользователями
+- Просмотр всех карт системы
 
-<h2> 📤 Формат сдачи</h2>
-<p>
-Весь код и изменения принимаются только через git-репозиторий с открытым доступом к проекту. Отправка файлов в любом виде не принимается.
-  </p>
+**Пользователь (USER):**
+- Просмотр своих карт
+- Переводы между своими картами
+- Блокировка карт
+- Поиск и фильтрация карт
+
+### 🔐 Аутентификация
+
+Система использует JWT токены для аутентификации. Токен должен передаваться в заголовке:
+```
+Authorization: Bearer <your-jwt-token>
+```
+
+## 📊 API Документация
+
+После запуска приложения доступны:
+
+- **Swagger UI**: http://localhost:8080/api/swagger-ui.html
+- **OpenAPI спецификация**: http://localhost:8080/api/api-docs
+- **YAML документация**: http://localhost:8080/api/api-docs.yaml
+
+## 🗄️ База данных
+
+**PostgreSQL** конфигурация:
+- Хост: `localhost:5432`
+- База: `banking_system`
+- Пользователь: `postgres`
+- Пароль: `postgres`
+
+Миграции управляются через **Liquibase**.
+
+## ⚙️ Конфигурация
+
+Основные настройки в `application.yml`:
+
+```yaml
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/banking_system
+    username: postgres
+    password: postgres
+
+jwt:
+  secret: your-secret-key
+  expiration: 86400000 # 24 hours
+```
+
+## 🧪 Тестирование
+
+```bash
+# Запуск unit-тестов
+mvn test
+
+# Запуск с coverage
+mvn jacoco:report
+```
+
+Тесты используют TestContainers для изолированного тестирования с реальной БД.
+
+## 🐳 Docker
+
+### Сборка образа
+```bash
+docker build -t bank-cards-app .
+```
+
+### Запуск контейнера
+```bash
+docker run -p 8080:8080 \
+  -e SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/banking_system \
+  -e SPRING_DATASOURCE_USERNAME=postgres \
+  -e SPRING_DATASOURCE_PASSWORD=postgres \
+  bank-cards-app
+```
+
+## 🔧 Технологии
+
+- **Java 17** + **Spring Boot 3.4.5**
+- **Spring Security** + **JWT**
+- **Spring Data JPA** + **PostgreSQL**
+- **Liquibase** для миграций
+- **MapStruct** для маппинга DTO
+- **SpringDoc OpenAPI** для документации
+- **Docker** для контейнеризации
+
+## 🚀 Эндпоинты API
+
+### Аутентификация
+- `POST /auth/login` - Вход в систему
+- `POST /auth/register` - Регистрация пользователя
+
+### Карты (USER)
+- `GET /user/cards` - Список карт пользователя
+- `GET /user/cards/{id}` - Получить карту
+- `POST /user/cards/{id}/block` - Заблокировать карту
+- `POST /user/cards/transfer` - Перевод между картами
+
+### Карты (ADMIN)
+- `GET /admin/cards` - Все карты системы
+- `POST /admin/cards` - Создать карту
+- `DELETE /admin/cards/{id}` - Удалить карту
+- `GET /admin/cards/user/{userId}` - Карты пользователя
+
+## 📝 Логирование
+
+Уровни логирования настраиваются через environment variables:
+- `LOG_LEVEL_COM_EXAMPLE=DEBUG`
+- `LOG_LEVEL_SPRING_SECURITY=DEBUG`
+- `LOG_LEVEL_HIBERNATE_SQL=DEBUG`
+
+## 🤝 Разработка
+
+### Code Style
+Проект использует Checkstyle для проверки code style:
+```bash
+mvn checkstyle:check
+```
