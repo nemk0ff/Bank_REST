@@ -2,6 +2,7 @@ package com.example.bankcards.service.impl;
 
 import com.example.bankcards.dto.card.BankCardDTO;
 import com.example.bankcards.dto.card.CreateCardRequestDTO;
+import com.example.bankcards.dto.mapper.BankCardMapper;
 import com.example.bankcards.entity.BankCard;
 import com.example.bankcards.entity.CardStatus;
 import com.example.bankcards.entity.User;
@@ -55,7 +56,7 @@ public class AdminCardServiceImpl implements AdminCardService {
     BankCard savedCard = cardRepository.save(card);
     log.info("Карта создана успешно. ID: {}", savedCard.getId());
 
-    return convertToDTO(savedCard);
+    return BankCardMapper.INSTANCE.toCardDTO(savedCard);
   }
 
   @Transactional
@@ -86,7 +87,7 @@ public class AdminCardServiceImpl implements AdminCardService {
   public Page<BankCardDTO> getAllCards(Pageable pageable) {
     log.debug("Админ запрашивает все карты");
     return cardRepository.findAll(pageable)
-        .map(this::convertToDTO);
+        .map(BankCardMapper.INSTANCE::toCardDTO);
   }
 
   @Transactional(readOnly = true)
@@ -96,7 +97,7 @@ public class AdminCardServiceImpl implements AdminCardService {
     BankCard card = cardRepository.findById(cardId)
         .orElseThrow(() -> new CardNotFoundException(cardId));
 
-    return convertToDTO(card);
+    return BankCardMapper.INSTANCE.toCardDTO(card);
   }
 
   @Transactional(readOnly = true)
@@ -108,7 +109,7 @@ public class AdminCardServiceImpl implements AdminCardService {
     }
 
     return cardRepository.findByUserId(userId, pageable)
-        .map(this::convertToDTO);
+        .map(BankCardMapper.INSTANCE::toCardDTO);
   }
 
   @Transactional(readOnly = true)
@@ -120,7 +121,7 @@ public class AdminCardServiceImpl implements AdminCardService {
     }
 
     return cardRepository.findByUserId(userId).stream()
-        .map(this::convertToDTO)
+        .map(BankCardMapper.INSTANCE::toCardDTO)
         .toList();
   }
 
@@ -132,23 +133,10 @@ public class AdminCardServiceImpl implements AdminCardService {
     BankCard updatedCard = cardRepository.save(card);
 
     log.info("Статус карты ID: {} изменен на {}", cardId, newStatus);
-    return convertToDTO(updatedCard);
+    return BankCardMapper.INSTANCE.toCardDTO(updatedCard);
   }
 
   private String generateMaskedNumber(String cardNumber) {
     return "**** **** **** " + cardNumber.substring(cardNumber.length() - 4);
-  }
-
-  private BankCardDTO convertToDTO(BankCard card) {
-    return new BankCardDTO(
-        card.getId(),
-        card.getMaskedNumber(),
-        card.getCardHolder(),
-        card.getExpiryDate(),
-        card.getStatus(),
-        card.getBalance(),
-        card.getUser().getId(),
-        card.getCreatedAt()
-    );
   }
 }

@@ -4,6 +4,7 @@ import com.example.bankcards.dto.auth.AuthRequestDTO;
 import com.example.bankcards.dto.auth.AuthResponseDTO;
 import com.example.bankcards.dto.auth.RegisterDTO;
 import com.example.bankcards.dto.auth.UserResponseDTO;
+import com.example.bankcards.dto.mapper.UserMapper;
 import com.example.bankcards.entity.Role;
 import com.example.bankcards.entity.User;
 import com.example.bankcards.exception.auth.EmailAlreadyExistsException;
@@ -69,7 +70,7 @@ public class AuthServiceImpl implements AuthService {
     User savedUser = userRepository.save(user);
     log.info("Пользователь {} успешно зарегистрирован.", regDTO.email());
 
-    return toUserResponseDTO(savedUser);
+    return UserMapper.INSTANCE.toUserDTO(savedUser);
   }
 
   @Override
@@ -85,17 +86,5 @@ public class AuthServiceImpl implements AuthService {
         .password(user.getPassword())
         .roles(user.getRole().name())
         .build();
-  }
-
-  private UserResponseDTO toUserResponseDTO(User user) {
-    return new UserResponseDTO(
-        user.getId(),
-        user.getEmail(),
-        user.getRole(),
-        user.getName(),
-        user.getSurname(),
-        user.getBirthdate(),
-        user.getRegisteredAt()
-    );
   }
 }

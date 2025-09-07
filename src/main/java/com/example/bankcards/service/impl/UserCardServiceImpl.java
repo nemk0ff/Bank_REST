@@ -1,6 +1,7 @@
 package com.example.bankcards.service.impl;
 
 import com.example.bankcards.dto.card.BankCardDTO;
+import com.example.bankcards.dto.mapper.BankCardMapper;
 import com.example.bankcards.dto.transfer.TransferRequestDTO;
 import com.example.bankcards.dto.transfer.TransferResponseDTO;
 import com.example.bankcards.entity.BankCard;
@@ -37,14 +38,14 @@ public class UserCardServiceImpl implements UserCardService {
   public Page<BankCardDTO> getUserCards(Long userId, Pageable pageable) {
     log.debug("Пользователь {} запрашивает свои карты", userId);
     return cardRepository.findByUserId(userId, pageable)
-        .map(this::convertToDTO);
+        .map(BankCardMapper.INSTANCE::toCardDTO);
   }
 
   @Transactional(readOnly = true)
   public Page<BankCardDTO> getUserActiveCards(Long userId, Pageable pageable) {
     log.debug("Пользователь {} запрашивает активные карты", userId);
     return cardRepository.findByUserIdAndStatus(userId, CardStatus.ACTIVE, pageable)
-        .map(this::convertToDTO);
+        .map(BankCardMapper.INSTANCE::toCardDTO);
   }
 
   @Transactional(readOnly = true)
@@ -52,7 +53,7 @@ public class UserCardServiceImpl implements UserCardService {
     log.debug("Пользователь {} запрашивает детали карты {}", userId, cardId);
 
     BankCard card = getCardWithAccessCheck(cardId, userId);
-    return convertToDTO(card);
+    return BankCardMapper.INSTANCE.toCardDTO(card);
   }
 
   @Transactional
@@ -69,7 +70,7 @@ public class UserCardServiceImpl implements UserCardService {
     BankCard updatedCard = cardRepository.save(card);
 
     log.info("Карта {} заблокирована пользователем {}", cardId, userId);
-    return convertToDTO(updatedCard);
+    return BankCardMapper.INSTANCE.toCardDTO(updatedCard);
   }
 
   @Transactional
@@ -120,7 +121,7 @@ public class UserCardServiceImpl implements UserCardService {
     }
 
     return cardRepository.findByUserIdAndCardHolderContainingIgnoreCase(userId, search, pageable)
-        .map(this::convertToDTO);
+        .map(BankCardMapper.INSTANCE::toCardDTO);
   }
 
   private BankCard getCardWithAccessCheck(Long cardId, Long userId) {
@@ -162,18 +163,5 @@ public class UserCardServiceImpl implements UserCardService {
     if (toCard.getExpiryDate().isBefore(LocalDate.now())) {
       throw new CardExpiredException(toCard.getId());
     }
-  }
-
-  private BankCardDTO convertToDTO(BankCard card) {
-    return new BankCardDTO(
-        card.getId(),
-        card.getMaskedNumber(),
-        card.getCardHolder(),
-        card.getExpiryDate(),
-        card.getStatus(),
-        card.getBalance(),
-        card.getUser().getId(),
-        card.getCreatedAt()
-    );
   }
 }

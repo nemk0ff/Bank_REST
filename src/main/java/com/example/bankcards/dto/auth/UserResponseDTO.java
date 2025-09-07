@@ -17,7 +17,7 @@ public record UserResponseDTO(
     String surname,
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
-    LocalDate birthDate,
+    LocalDate birthdate,
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
     ZonedDateTime registeredAt
