@@ -21,13 +21,27 @@ spring:
   liquibase:
     change-log: classpath:db/master.yaml
     enabled: ${LIQUIBASE_ENABLED:true}
+  # Добавляем конфигурацию для статических ресурсов
+  web:
+    resources:
+      static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,file:./docs/
 
 springdoc:
   api-docs:
     path: /api-docs
+    enabled: true
   swagger-ui:
     path: /swagger-ui.html
     enabled: true
+    url: /api/api-docs.yaml  # Указываем путь к нашему YAML файлу
+    config-url: /api/api-docs/swagger-config
+    operations-sorter: method
+    tags-sorter: alpha
+    display-request-duration: true
+
+# Явно указываем путь к OpenAPI файлу
+openapi:
+  file-path: ./docs/openapi.yaml
 
 logging:
   level:

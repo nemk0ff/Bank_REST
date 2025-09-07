@@ -1,1 +1,746 @@
-# Здесь будет OpenAPI описание всех доступных эндпоинтов и моделей данных.
+openapi: 3.0.0
+info:
+  title: Bank Cards API
+  description: API для управления банковскими картами пользователей
+  version: 1.0.0
+  contact:
+    name: Bank Cards Team
+    email: support@bankcards.example.com
+
+servers:
+  - url: http://localhost:8080/api
+    description: Development server
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    AuthRequestDTO:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: user@example.com
+        password:
+          type: string
+          format: password
+          example: password123
+
+    AuthResponseDTO:
+      type: object
+      properties:
+        token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        type:
+          type: string
+          example: Bearer
+        expiresIn:
+          type: integer
+          example: 3600
+
+    RegisterDTO:
+      type: object
+      required:
+        - email
+        - password
+        - name
+        - surname
+      properties:
+        email:
+          type: string
+          format: email
+          example: user@example.com
+        password:
+          type: string
+          format: password
+          example: password123
+        name:
+          type: string
+          example: Иван
+        surname:
+          type: string
+          example: Иванов
+
+    UserResponseDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        email:
+          type: string
+          example: user@example.com
+        name:
+          type: string
+          example: Иван
+        surname:
+          type: string
+          example: Иванов
+
+    BankCardDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        maskedNumber:
+          type: string
+          example: "**** **** **** 7890"
+        cardHolder:
+          type: string
+          example: "IVAN IVANOV"
+        expiryDate:
+          type: string
+          format: date
+          example: "2026-12-31"
+        status:
+          type: string
+          enum: [ACTIVE, BLOCKED]
+          example: ACTIVE
+        balance:
+          type: number
+          format: decimal
+          example: 1000.50
+        userId:
+          type: integer
+          example: 1
+        createdAt:
+          type: string
+          format: date-time
+          example: "2024-01-15T10:30:00Z"
+
+    CreateCardRequestDTO:
+      type: object
+      required:
+        - cardNumber
+        - cardHolder
+        - expiryDate
+        - userId
+      properties:
+        cardNumber:
+          type: string
+          example: "5536911234567890"
+        cardHolder:
+          type: string
+          example: "IVAN IVANOV"
+        expiryDate:
+          type: string
+          format: date
+          example: "2026-12-31"
+        userId:
+          type: integer
+          example: 1
+
+    TransferRequestDTO:
+      type: object
+      required:
+        - fromCardId
+        - toCardId
+        - amount
+      properties:
+        fromCardId:
+          type: integer
+          example: 1
+        toCardId:
+          type: integer
+          example: 2
+        amount:
+          type: number
+          format: decimal
+          example: 100.00
+
+    TransferResponseDTO:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: "Перевод выполнен успешно"
+        fromCardBalance:
+          type: number
+          format: decimal
+          example: 900.50
+        toCardBalance:
+          type: number
+          format: decimal
+          example: 1100.50
+
+    ErrorResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+        error:
+          type: string
+        message:
+          type: string
+        path:
+          type: string
+
+security:
+  - bearerAuth: []
+
+paths:
+  /health:
+    get:
+      tags:
+        - Health Check
+      summary: Проверка работоспособности сервиса
+      responses:
+        '200':
+          description: Сервис работает
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "OK"
+
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Аутентификация пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthRequestDTO'
+      responses:
+        '200':
+          description: Успешная аутентификация
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponseDTO'
+        '400':
+          description: Неверные данные запроса
+        '401':
+          description: Неверные учетные данные
+
+  /auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Регистрация нового пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterDTO'
+      responses:
+        '200':
+          description: Успешная регистрация
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponseDTO'
+        '400':
+          description: Неверные данные регистрации
+        '409':
+          description: Пользователь уже существует
+
+  /user/cards:
+    get:
+      tags:
+        - User Card Operations
+      summary: Получить карты пользователя с пагинацией
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+        - name: sortBy
+          in: query
+          required: false
+          schema:
+            type: string
+            default: createdAt
+        - name: direction
+          in: query
+          required: false
+          schema:
+            type: string
+            default: desc
+            enum: [asc, desc]
+      responses:
+        '200':
+          description: Список карт пользователя
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BankCardDTO'
+                  totalPages:
+                    type: integer
+                  totalElements:
+                    type: integer
+                  size:
+                    type: integer
+                  number:
+                    type: integer
+        '401':
+          description: Не авторизован
+
+  /user/cards/active:
+    get:
+      tags:
+        - User Card Operations
+      summary: Получить активные карты пользователя
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Список активных карт
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BankCardDTO'
+        '401':
+          description: Не авторизован
+
+  /user/cards/{cardId}:
+    get:
+      tags:
+        - User Card Operations
+      summary: Получить детали карты
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: cardId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Детали карты
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankCardDTO'
+        '401':
+          description: Не авторизован
+        '403':
+          description: Нет доступа к карте
+        '404':
+          description: Карта не найдена
+
+  /user/cards/{cardId}/block:
+    post:
+      tags:
+        - User Card Operations
+      summary: Заблокировать карту
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: cardId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Карта заблокирована
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankCardDTO'
+        '400':
+          description: Карта уже заблокирована
+        '401':
+          description: Не авторизован
+        '403':
+          description: Нет доступа к карте
+        '404':
+          description: Карта не найдена
+
+  /user/cards/transfer:
+    post:
+      tags:
+        - User Card Operations
+      summary: Перевод между своими картами
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransferRequestDTO'
+      responses:
+        '200':
+          description: Перевод выполнен успешно
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransferResponseDTO'
+        '400':
+          description: Неверные данные перевода
+        '401':
+          description: Не авторизован
+        '403':
+          description: Нет доступа к картам
+        '404':
+          description: Карта не найдена
+
+  /user/cards/balance/total:
+    get:
+      tags:
+        - User Card Operations
+      summary: Получить общий баланс
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Общий баланс активных карт
+          content:
+            application/json:
+              schema:
+                type: number
+                example: 1500.50
+        '401':
+          description: Не авторизован
+
+  /user/cards/search:
+    get:
+      tags:
+        - User Card Operations
+      summary: Поиск карт по владельцу
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Результаты поиска
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BankCardDTO'
+        '401':
+          description: Не авторизован
+
+  /admin/cards:
+    get:
+      tags:
+        - Admin Card Management
+      summary: Получить все карты с пагинацией
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+        - name: sortBy
+          in: query
+          required: false
+          schema:
+            type: string
+            default: createdAt
+        - name: direction
+          in: query
+          required: false
+          schema:
+            type: string
+            default: desc
+            enum: [asc, desc]
+      responses:
+        '200':
+          description: Список всех карт
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BankCardDTO'
+        '401':
+          description: Не авторизован
+        '403':
+          description: Недостаточно прав (требуется роль ADMIN)
+
+    post:
+      tags:
+        - Admin Card Management
+      summary: Создать новую карту
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCardRequestDTO'
+      responses:
+        '200':
+          description: Карта создана успешно
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankCardDTO'
+        '400':
+          description: Неверные данные карты
+        '401':
+          description: Не авторизован
+        '403':
+          description: Недостаточно прав
+        '404':
+          description: Пользователь не найден
+        '409':
+          description: Карта уже существует
+
+  /admin/cards/{cardId}:
+    get:
+      tags:
+        - Admin Card Management
+      summary: Получить карту по ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: cardId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Детали карты
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankCardDTO'
+        '401':
+          description: Не авторизован
+        '403':
+          description: Недостаточно прав
+        '404':
+          description: Карта не найдена
+
+    delete:
+      tags:
+        - Admin Card Management
+      summary: Удалить карту
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: cardId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Карта удалена успешно
+        '401':
+          description: Не авторизован
+        '403':
+          description: Недостаточно прав
+        '404':
+          description: Карта не найдена
+
+  /admin/cards/{cardId}/block:
+    post:
+      tags:
+        - Admin Card Management
+      summary: Заблокировать карту
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: cardId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Карта заблокирована
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankCardDTO'
+        '401':
+          description: Не авторизован
+        '403':
+          description: Недостаточно прав
+        '404':
+          description: Карта не найдена
+
+  /admin/cards/{cardId}/activate:
+    post:
+      tags:
+        - Admin Card Management
+      summary: Активировать карту
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: cardId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Карта активирована
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankCardDTO'
+        '401':
+          description: Не авторизован
+        '403':
+          description: Недостаточно прав
+        '404':
+          description: Карта не найдена
+
+  /admin/cards/user/{userId}:
+    get:
+      tags:
+        - Admin Card Management
+      summary: Получить карты пользователя с пагинацией
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Список карт пользователя
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BankCardDTO'
+        '401':
+          description: Не авторизован
+        '403':
+          description: Недостаточно прав
+        '404':
+          description: Пользователь не найден
+
+  /admin/cards/user/{userId}/all:
+    get:
+      tags:
+        - Admin Card Management
+      summary: Получить все карты пользователя (без пагинации)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Список всех карт пользователя
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BankCardDTO'
+        '401':
+          description: Не авторизован
+        '403':
+          description: Недостаточно прав
+        '404':
+          description: Пользователь не найден
